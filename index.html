@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#E9ECEF">
+  <meta name="description" content="An educational workspace for exploring regular expressions and finite automata.">
+  <title>Regex to Automata Simulator</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/nfa.js" defer></script>
+  <script src="js/dfa.js" defer></script>
+  <script src="js/minimizer.js" defer></script>
+  <script src="js/simulator.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="site-title" href="#top">Regex to Automata Simulator</a>
+    </header>
+
+    <main id="top">
+      <section class="intro" aria-labelledby="page-title">
+        <div class="intro-copy">
+          <h1 id="page-title">Regex to Automata Simulator</h1>
+          <p class="subtitle">A visual study of finite-state machines, from expression to execution.</p>
+        </div>
+      </section>
+
+      <section class="workbench" aria-label="Automata workbench">
+        <aside class="control-panel" aria-labelledby="expression-heading">
+          <div class="panel-heading">
+            <h2 id="expression-heading">Regular expression</h2>
+          </div>
+          <label class="field-label" for="regex-input">Expression</label>
+          <div class="input-wrap"><input id="regex-input" name="regex" type="text" value="a(b|c)*" autocomplete="off" spellcheck="false" required aria-describedby="regex-hint"></div>
+          <p class="field-hint" id="regex-hint">Letters and digits with union, concatenation, and Kleene star.</p>
+
+          <div class="action-group" aria-label="Automata actions">
+            <button class="action-button" type="button" data-generator="nfa" data-generate="nfa" aria-pressed="false">Generate NFA</button>
+            <button class="action-button" type="button" data-generator="dfa" data-generate="dfa" aria-pressed="false">Generate DFA</button>
+            <button class="action-button" type="button" data-generator="minimized" data-open-tab="minimized-tab" aria-pressed="false">Minimize DFA</button>
+          </div>
+          <p class="control-note">Parentheses group expressions. For example, <code>(a|b)*abb</code>.</p>
+        </aside>
+
+        <section class="visual-panel" aria-label="Automata views">
+          <div class="visual-topline"><div><h2>Machine workspace</h2></div><div class="canvas-meta"><span class="canvas-state"><i aria-hidden="true"></i><span id="canvas-status">Awaiting generation</span></span><span class="state-counts" id="automata-counts">NFA: — / DFA: —</span></div></div>
+          <div class="tab-list" role="tablist" aria-label="Workspace views">
+            <button class="tab-button" id="nfa-tab" type="button" role="tab" aria-selected="true" aria-controls="nfa-panel" tabindex="0">NFA</button>
+            <button class="tab-button" id="dfa-tab" type="button" role="tab" aria-selected="false" aria-controls="dfa-panel" tabindex="-1">DFA</button>
+            <button class="tab-button" id="minimized-tab" type="button" role="tab" aria-selected="false" aria-controls="minimized-panel" tabindex="-1">Minimized DFA</button>
+            <button class="tab-button" id="simulator-tab" type="button" role="tab" aria-selected="false" aria-controls="simulator-panel" tabindex="-1">String simulator</button>
+          </div>
+
+          <section class="tab-panel" id="nfa-panel" role="tabpanel" aria-labelledby="nfa-tab" tabindex="0">
+            <div class="canvas-heading"><h3>NFA visualization</h3><span class="placeholder-tag">Awaiting generation</span></div>
+            <div class="graph-frame">
+              <svg class="automata-graph" id="nfa-graph" viewBox="0 0 640 230" role="img" aria-label="Generated NFA diagram" hidden></svg>
+              <p class="graph-empty">Generate an NFA to inspect its states and epsilon transitions.</p>
+              <div class="graph-legend"><span><i class="legend-start"></i>Start state</span><span><i class="legend-accept"></i>Accept state</span><span><i class="legend-transition"></i>Transition</span></div>
+            </div>
+          </section>
+
+          <section class="tab-panel" id="dfa-panel" role="tabpanel" aria-labelledby="dfa-tab" tabindex="0" hidden>
+            <div class="canvas-heading"><h3>DFA visualization</h3><span class="placeholder-tag">Awaiting generation</span></div>
+            <div class="graph-frame">
+              <svg class="automata-graph" id="dfa-graph" viewBox="0 0 640 230" role="img" aria-label="Generated DFA diagram" hidden></svg>
+              <p class="graph-empty">Generate a DFA to see deterministic transitions and state subsets.</p>
+              <div class="graph-legend"><span><i class="legend-start"></i>Start state</span><span><i class="legend-accept"></i>Accept state</span><span><i class="legend-transition"></i>Transition</span></div>
+            </div>
+          </section>
+
+          <section class="tab-panel" id="minimized-panel" role="tabpanel" aria-labelledby="minimized-tab" tabindex="0" hidden>
+            <div class="canvas-heading"><h3>Minimized DFA</h3><div class="minimized-meta"><span class="minimized-stats" id="minimized-stats">Generate a DFA to minimize it.</span><span class="placeholder-tag">Awaiting generation</span></div></div>
+            <div class="graph-frame">
+              <svg class="automata-graph" id="minimized-graph" viewBox="0 0 640 230" role="img" aria-label="Generated minimized DFA diagram" hidden></svg>
+              <p class="graph-empty">Minimize a DFA to see the reduced state graph.</p>
+              <div class="graph-legend"><span><i class="legend-start"></i>Start state</span><span><i class="legend-accept"></i>Accept state</span><span><i class="legend-transition"></i>Transition</span></div>
+            </div>
+          </section>
+
+          <section class="tab-panel simulator-panel" id="simulator-panel" role="tabpanel" aria-labelledby="simulator-tab" tabindex="0" hidden>
+            <div class="canvas-heading"><h3>String simulator</h3><span class="placeholder-tag">Live</span></div>
+            <form class="simulator-form" id="simulator-form">
+              <div class="simulation-options"><label class="field-label" for="simulation-mode">Machine</label><select id="simulation-mode" name="simulation-mode"><option value="dfa">Generated DFA</option><option value="nfa">Generated NFA with ε-closure</option></select></div>
+              <label class="field-label" for="test-string">Input string</label>
+              <div class="simulator-controls"><input id="test-string" name="test-string" type="text" placeholder="Try a string, e.g. abbc" autocomplete="off" spellcheck="false"><button class="simulate-button" type="submit"><span aria-hidden="true">▶</span> Simulate</button><button class="reset-button" id="reset-simulation" type="button" title="Reset simulation">Reset</button></div>
+            </form>
+            <div class="simulation-result" id="simulation-result" aria-live="polite"><span class="result-icon" aria-hidden="true">↳</span><p>Generate an NFA or DFA to test a string.</p><span class="result-state">IDLE</span></div>
+            <div class="trace-heading"><span>Execution path</span><span id="trace-current">Current state: —</span></div>
+            <p class="execution-path" id="execution-path">Generate a machine and simulate a string to see its complete path.</p>
+            <ol class="execution-trace" id="execution-trace" aria-label="Simulation transitions"></ol>
+          </section>
+
+          <section class="transition-section" aria-labelledby="transition-heading">
+            <div class="table-heading"><h3 id="transition-heading">Transition table</h3><span class="placeholder-tag" id="table-kind">Awaiting generation</span></div>
+            <div class="table-scroll"><table>
+              <caption class="visually-hidden" id="table-caption">Generated automaton transition table</caption>
+              <thead id="transition-table-head"></thead>
+              <tbody id="transition-table-body"></tbody>
+            </table></div>
+            <p class="table-note" id="table-note">Generate an automaton to view its computed transitions.</p>
+          </section>
+        </section>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
