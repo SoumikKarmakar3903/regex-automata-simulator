@@ -76,14 +76,3 @@ The project can also be opened directly in a modern browser. Live Server is reco
 
 Empty regular expressions and malformed operator/parenthesis sequences are rejected with an on-screen error.
 
-## Screenshots
-
-Add screenshots to the project and replace these image paths before submission:
-
-![Automata generation workspace](screenshots/automata-workspace.png)
-
-![Minimized DFA and execution trace](screenshots/minimized-dfa-trace.png)
-
-## Author
-
-**Author:** [Your Name]
